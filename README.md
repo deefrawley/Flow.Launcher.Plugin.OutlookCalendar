@@ -1,4 +1,4 @@
-# Outlook Agendar (Flow.Launcher.Plugin.OutlookCalendar)
+# Outlook Agenda (Flow.Launcher.Plugin.OutlookCalendar)
 
 Outlook calendar/agenda viewer for the [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher)
 
