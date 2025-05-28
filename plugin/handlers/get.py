@@ -16,6 +16,24 @@ class GetOutlookAgenda(SearchHandler[OutlookAgendaPlugin]):
     async def callback(self, query: Query):
         assert self.plugin
 
+        # Regex to get a valid date in YYYY-MM-DD format
+        date_regex = re.compile(
+            r"""^
+            (?!0000)                      # Year cannot be 0000
+            (?P<year>\d{4})               # Four-digit year
+            -
+            (?P<month>0[1-9]|1[0-2])      # Month 01-12
+            -
+            (?P<day>                     # Day depends on month
+                (?:0[1-9]|1\d|2[0-8])                             # Day 01-28
+                |(?:29|30)(?=(?P<m30>0[13-9]|1[0-2]))             # Day 29-30 for months with >=30 days
+                |31(?=(?P<mlong>0[13578]|1[02]))                  # Day 31 only for months with 31 days
+            )
+            $
+            """,
+            re.VERBOSE
+        )
+        
         try:
             outlook = win32com.client.Dispatch("Outlook.Application")
             if not query.text:
@@ -151,7 +169,7 @@ class GetOutlookAgenda(SearchHandler[OutlookAgendaPlugin]):
                                         sub=subj,
                                         icon="assets/app.png",
                                     )
-                    case query.text if re.fullmatch(r"\d{4}-\d{2}-\d{2}", query.text):
+                    case query.text if date_regex.match(query.text):
                         start_date_only = datetime.strptime(query.text, "%Y-%m-%d")
                         start_date = datetime.combine(start_date_only, time(0,1))
                         end_date = start_date + timedelta(days=1) - timedelta(seconds=1)
