@@ -48,6 +48,7 @@ class GetOutlookAgenda(SearchHandler[OutlookAgendaPlugin]):
                 match query.text:
                     # Capture the custom date range. Regex has ensured the format is correct
                     case "today" | "t":
+                        meeting_count = 0
                         start_date, end_date = self._get_date_range("today")
                         meetings = self._get_meetings(start_date, end_date) or []
                         if not meetings:
@@ -57,18 +58,29 @@ class GetOutlookAgenda(SearchHandler[OutlookAgendaPlugin]):
                                 icon="assets/app.png",
                             )
                         else:
-                            meeting_count = 0
                             for meeting in meetings:
                                 # Filter out past meetings. We can use UTC as it's just time math not local TZ specific
                                 if meeting["end_utc"] >= utc_now:
                                     meeting_count += 1
+                                    parts = []
+                                    local_dt = datetime.now().astimezone()
+                                    local_tz = datetime.now().astimezone().tzinfo
+                                    mstart = meeting["start"].replace(tzinfo=local_tz)
+                                    mend = meeting["end"].replace(tzinfo=local_tz)
+
+                                    parts.append(meeting['subject'])
+                                    if meeting["is_recurring"]:
+                                        parts.append("(recurring)")
+                                    if mstart <= local_dt <= mend:
+                                        parts.append(" - in progress")
+
                                     subj = self._meeting_result_sub(
                                         meeting["start"],
                                         meeting["end"],
                                         meeting["location"],
-                                    )
+                                    ) 
                                     yield Result(
-                                        title=f"{meeting['subject']} {'(recurring)' if meeting['is_recurring'] else ''}",
+                                        title=" ".join(parts),
                                         sub=subj,
                                         icon="assets/app.png",
                                     )
@@ -91,6 +103,7 @@ class GetOutlookAgenda(SearchHandler[OutlookAgendaPlugin]):
                             )
                         else:
                             for meeting in meetings:
+          
                                 subj = self._meeting_result_sub(
                                     meeting["start"],
                                     meeting["end"],
