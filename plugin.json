@@ -1,12 +1,12 @@
 {
-    "ID": "e11496d5-4cd9-425f-a527-1b38c16fa328",
+    "ID": "09640c1d-9880-4af3-b89a-bd5f036f532a",
     "ActionKeyword": "olcal",
-    "Name": "Outlook Agenda",
-    "Description": "See your Outlook agenda (classic Outlook only)",
+    "Name": "Outlook Calendar",
+    "Description": "See your Outlook calendar (classic Outlook only)",
     "Author": "CitizenDee",
     "Version": "1.0.0",
     "Language": "python_v2",
-    "Website": "https://github.com/deefrawley/Flow.Launcher.Plugin.Outlook",
+    "Website": "https://github.com/deefrawley/Flow.Launcher.Plugin.OutlookCalendar",
     "IcoPath": "Images/app.png",
     "ExecuteFileName": "main.py"
 }
