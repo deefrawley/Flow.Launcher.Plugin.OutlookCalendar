@@ -1,0 +1,31 @@
+name: PR Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      python_ver: 3.8
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r -t ./lib requirements.txt
+          zip -r Flow.Launcher.Plugin.OutlookCalendar.zip . -x '*.git*'
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flow.Launcher.Plugin.OutlookCalendar
+          path: Flow.Launcher.Plugin.OutlookCalendar.zip
+          
+# permissions:
+#   contents: write
