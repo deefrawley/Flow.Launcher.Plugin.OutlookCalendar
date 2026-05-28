@@ -2,16 +2,14 @@ import sys
 from pathlib import Path
 
 root = Path(__file__).parent
+sys.path.insert(0, root.as_posix())
 sys.path.extend(
-    [
-        path.as_posix()
-        for path in (
-            root,
-            root / "lib",
-            root / "lib" / "win32",
-            root / "lib" / "win32" / "lib",
-        )
-    ]
+    path.as_posix()
+    for path in (
+        root / "lib",
+        root / "lib" / "win32",
+        root / "lib" / "win32" / "lib",
+    )
 )
 
 from flogin.utils import setup_logging
@@ -22,7 +20,7 @@ setup_logging()
 with Pip() as pip:
     pip.ensure_installed("pywin32", module="pywintypes")
 
-from plugin.plugin import OutlookAgendaPlugin
+from OutlookAgendaPlugin.plugin import OutlookAgendaPlugin
 
 if __name__ == "__main__":
     OutlookAgendaPlugin().run()
